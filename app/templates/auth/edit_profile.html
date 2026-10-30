@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Bio - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-white">
+        <div class="mb-4">
+          <a href="{{ url_for('auth.user_profile', username=current_user.username) }}" class="small text-muted text-decoration-none mb-2 d-inline-block">
+            <i class="bi bi-arrow-left me-1"></i> Back to Profile
+          </a>
+          <h1 class="h3 fw-bold mb-1">Edit Your Profile</h1>
+          <p class="text-secondary small">Update your author biography shown on your articles and profile page.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.edit_profile') }}">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold" for="bio">{{ form.bio.label.text }}</label>
+            {{ form.bio(class="form-control" + (" is-invalid" if form.bio.errors else ""), rows=5) }}
+            {% for error in form.bio.errors %}
+              <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+            {% endfor %}
+            <div class="form-text small">Maximum 500 characters. Share your expertise, interests, or credentials.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('auth.user_profile', username=current_user.username) }}" class="btn btn-light border">Cancel</a>
+            <button type="submit" class="btn btn-primary fw-semibold">
+              <i class="bi bi-check2-circle me-1"></i> Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

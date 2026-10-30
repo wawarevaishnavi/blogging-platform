@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+
+{% block title %}Search & Filter Articles - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Search Header -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-9 text-center">
+      <h1 class="h2 fw-bold mb-3">Search & Filter Articles</h1>
+      <p class="text-secondary mb-4">Discover posts across diverse technical topics, categories, and tags.</p>
+
+      <!-- Search Input Form -->
+      <form action="{{ url_for('main.search') }}" method="GET" class="card p-3 shadow-sm border-0 rounded-4 bg-white">
+        <div class="input-group input-group-lg">
+          <span class="input-group-text bg-white border-end-0 text-muted">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="text" name="q" class="form-control border-start-0 border-end-0 ps-0" placeholder="Search by title, topic, or content keywords..." value="{{ query }}">
+          {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category.slug }}">
+          {% endif %}
+          {% if selected_tag %}
+            <input type="hidden" name="tag" value="{{ selected_tag.slug }}">
+          {% endif %}
+          <input type="hidden" name="sort" value="{{ sort_by }}">
+          <button class="btn btn-primary px-4 fw-semibold" type="submit">Search</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Filters & Sorting Bar -->
+  <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <!-- Active Filters Display -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="small fw-bold text-secondary text-uppercase">Filters:</span>
+
+        {% if query %}
+          <span class="badge bg-light text-dark border p-2">
+            Query: "<strong>{{ query }}</strong>"
+            <a href="{{ url_for('main.search', category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}" class="text-danger ms-1"><i class="bi bi-x-circle-fill"></i></a>
+          </span>
+        {% endif %}
+
+        {% if selected_category %}
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle p-2">
+            Category: <strong>{{ selected_category.name }}</strong>
+            <a href="{{ url_for('main.search', q=query if query else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}" class="text-danger ms-1"><i class="bi bi-x-circle-fill"></i></a>
+          </span>
+        {% endif %}
+
+        {% if selected_tag %}
+          <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle p-2">
+            Tag: <strong>#{{ selected_tag.name }}</strong>
+            <a href="{{ url_for('main.search', q=query if query else None, category=selected_category.slug if selected_category else None, sort=sort_by) }}" class="text-danger ms-1"><i class="bi bi-x-circle-fill"></i></a>
+          </span>
+        {% endif %}
+
+        {% if not query and not selected_category and not selected_tag %}
+          <span class="text-muted small">None active (showing all articles)</span>
+        {% else %}
+          <a href="{{ url_for('main.search') }}" class="btn btn-sm btn-link text-decoration-none text-muted p-0 ms-2">Clear all</a>
+        {% endif %}
+      </div>
+
+      <!-- Sorting Selector -->
+      <div class="d-flex align-items-center gap-2">
+        <label for="sortSelector" class="small fw-semibold text-secondary text-nowrap mb-0">Sort by:</label>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Sort options">
+          <a href="{{ url_for('main.search', q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='newest') }}" class="btn {% if sort_by == 'newest' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Newest
+          </a>
+          <a href="{{ url_for('main.search', q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='oldest') }}" class="btn {% if sort_by == 'oldest' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Oldest
+          </a>
+          <a href="{{ url_for('main.search', q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='popular') }}" class="btn {% if sort_by == 'popular' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Most Discussed
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Posts Results Column -->
+    <div class="col-lg-8">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <span class="text-muted small">
+          Found <strong>{{ pagination.total }}</strong> {% if pagination.total == 1 %}article{% else %}articles{% endif %}
+        </span>
+      </div>
+
+      {% if posts %}
+        <div class="row g-4">
+          {% for post in posts %}
+            <div class="col-md-6">
+              <div class="card card-post">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    {% if post.category %}
+                      <a href="{{ url_for('posts.category_posts', slug=post.category.slug) }}" class="category-badge">
+                        {{ post.category.name }}
+                      </a>
+                    {% else %}
+                      <span class="category-badge">General</span>
+                    {% endif %}
+                    <span class="text-muted small">
+                      <i class="bi bi-clock me-1"></i> {{ post.reading_time }}m read
+                    </span>
+                  </div>
+
+                  <h3 class="post-title">
+                    <a href="{{ url_for('posts.post_detail', slug=post.slug) }}">
+                      {{ post.title }}
+                    </a>
+                  </h3>
+
+                  <p class="post-excerpt">
+                    {{ post.clean_excerpt }}
+                  </p>
+
+                  <div class="mb-3">
+                    {% for tag in post.tags[:3] %}
+                      <a href="{{ url_for('main.search', tag=tag.slug) }}" class="tag-pill">
+                        #{{ tag.name }}
+                      </a>
+                    {% endfor %}
+                  </div>
+
+                  <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-circle" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                        {{ post.author.initial }}
+                      </div>
+                      <span class="small fw-semibold">{{ post.author.username }}</span>
+                    </div>
+                    <div class="text-muted small">
+                      <i class="bi bi-chat-text me-1"></i> {{ post.comments.count() }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+          <nav class="mt-5" aria-label="Search results pages">
+            <ul class="pagination justify-content-center">
+              {% if pagination.has_prev %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.search', page=pagination.prev_num, q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">Previous</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+              {% endif %}
+
+              {% for p in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                {% if p %}
+                  {% if p == pagination.page %}
+                    <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                  {% else %}
+                    <li class="page-item">
+                      <a class="page-link" href="{{ url_for('main.search', page=p, q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">{{ p }}</a>
+                    </li>
+                  {% endif %}
+                {% else %}
+                  <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                {% endif %}
+              {% endfor %}
+
+              {% if pagination.has_next %}
+                <li class="page-item">
+                  <a class="page-link" href="{{ url_for('main.search', page=pagination.next_num, q=query if query else None, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">Next</a>
+                </li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <!-- Empty State -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+          <i class="bi bi-search display-3 text-muted mb-3"></i>
+          <h4>No articles match your criteria</h4>
+          <p class="text-secondary mb-4">
+            We couldn't find any stories matching your filters. Try checking for spelling errors or resetting your filters.
+          </p>
+          <div>
+            <a href="{{ url_for('main.search') }}" class="btn btn-primary">
+              <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filters
+            </a>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar Categories and Tags -->
+    <div class="col-lg-4">
+      <!-- Categories Card -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold mb-3">Filter by Category</h5>
+        <div class="list-group list-group-flush">
+          <a href="{{ url_for('main.search', q=query if query else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 {% if not selected_category %}fw-bold text-primary{% endif %}">
+            All Categories
+          </a>
+          {% for cat in categories %}
+            <a href="{{ url_for('main.search', category=cat.slug, q=query if query else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 {% if selected_category and selected_category.id == cat.id %}fw-bold text-primary{% endif %}">
+              <span><i class="bi bi-folder2 text-muted me-2"></i>{{ cat.name }}</span>
+              <span class="badge bg-light text-secondary border rounded-pill">{{ cat.post_count }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Popular Tags Card -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h5 class="fw-bold mb-3">Popular Tags</h5>
+        <div class="d-flex flex-wrap gap-2">
+          {% for t in popular_tags %}
+            <a href="{{ url_for('main.search', tag=t.slug, q=query if query else None, category=selected_category.slug if selected_category else None, sort=sort_by) }}" class="btn btn-sm {% if selected_tag and selected_tag.id == t.id %}btn-primary{% else %}btn-light border{% endif %} rounded-pill">
+              #{{ t.name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

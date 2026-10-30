@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}DevScribe - Full-Stack Blogging Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<section class="hero-banner">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 bg-white border rounded-pill shadow-sm mb-3">
+          <span class="badge bg-primary rounded-pill">Internship 2026</span>
+          <span class="small fw-semibold text-secondary">Flask 3.x & SQLAlchemy Architecture</span>
+        </div>
+        <h1 class="hero-title mb-3">
+          Where Developers Share <span class="gradient-text">Architectural Wisdom</span> & Code.
+        </h1>
+        <p class="lead text-secondary mb-4">
+          A high-performance blogging engine built from scratch with Python, Flask, Jinja2, and SQLite. Featuring rich text editing, secure authentication, role-based CRUD, and real-time search.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary btn-lg d-inline-flex align-items-center">
+              <i class="bi bi-pencil-square me-2"></i> Write New Story
+            </a>
+            <a href="{{ url_for('auth.dashboard') }}" class="btn btn-outline-primary btn-lg">
+              <i class="bi bi-speedometer2 me-2"></i> Go to Dashboard
+            </a>
+          {% else %}
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg d-inline-flex align-items-center">
+              <i class="bi bi-rocket-takeoff me-2"></i> Get Started Free
+            </a>
+            <a href="{{ url_for('posts.all_posts') }}" class="btn btn-outline-primary btn-lg">
+              <i class="bi bi-book me-2"></i> Explore Articles
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="card border-0 shadow-lg rounded-4 p-4 bg-white position-relative">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-light text-primary border fw-semibold">Interactive Shell Preview</span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle">Online</span>
+          </div>
+          <div class="bg-dark text-light p-3 rounded-3 font-monospace small mb-3">
+            <div class="text-secondary"># Python Flask Architecture</div>
+            <div class="text-info">&gt; from app import create_app, db</div>
+            <div class="text-info">&gt; app = create_app('production')</div>
+            <div class="text-warning">&gt; Post.query.filter_by(published=True).all()</div>
+            <div class="text-success">&lt;Flask App: 200 OK | Bleach XSS Safe&gt;</div>
+          </div>
+          <div class="row g-2 text-center">
+            <div class="col-4">
+              <div class="border rounded-3 p-2 bg-light">
+                <div class="fw-bold text-primary">{{ stats.total_posts }}</div>
+                <div class="small text-muted">Posts</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border rounded-3 p-2 bg-light">
+                <div class="fw-bold text-primary">{{ stats.total_authors }}</div>
+                <div class="small text-muted">Authors</div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="border rounded-3 p-2 bg-light">
+                <div class="fw-bold text-primary">{{ stats.total_comments }}</div>
+                <div class="small text-muted">Comments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Post Section -->
+{% if featured_post %}
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="h3 fw-bold mb-0">
+        <i class="bi bi-star-fill text-warning me-2"></i> Featured Story
+      </h2>
+      <a href="{{ url_for('posts.all_posts') }}" class="fw-semibold text-primary">
+        Browse All <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+      <div class="row g-0">
+        <div class="col-lg-7 p-4 p-md-5 d-flex flex-column justify-content-center">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            {% if featured_post.category %}
+              <a href="{{ url_for('posts.category_posts', slug=featured_post.category.slug) }}" class="category-badge">
+                {{ featured_post.category.name }}
+              </a>
+            {% endif %}
+            <span class="text-muted small">&bull;</span>
+            <span class="text-muted small">
+              <i class="bi bi-clock me-1"></i> {{ featured_post.reading_time }} min read
+            </span>
+          </div>
+
+          <h3 class="display-6 fw-bold mb-3">
+            <a href="{{ url_for('posts.post_detail', slug=featured_post.slug) }}" class="text-dark text-decoration-none">
+              {{ featured_post.title }}
+            </a>
+          </h3>
+
+          <p class="text-secondary fs-5 mb-4">
+            {{ featured_post.clean_excerpt }}
+          </p>
+
+          <div class="d-flex align-items-center justify-content-between mt-auto pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <div class="avatar-circle">
+                {{ featured_post.author.initial }}
+              </div>
+              <div>
+                <a href="{{ url_for('auth.user_profile', username=featured_post.author.username) }}" class="fw-bold text-dark text-decoration-none">
+                  {{ featured_post.author.username }}
+                </a>
+                <div class="text-muted small">{{ featured_post.created_at | datetimeformat }}</div>
+              </div>
+            </div>
+            <a href="{{ url_for('posts.post_detail', slug=featured_post.slug) }}" class="btn btn-outline-primary">
+              Read Article <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-lg-5 bg-light d-flex align-items-center justify-content-center p-4 border-start">
+          <div class="text-center p-4">
+            <i class="bi bi-code-square display-1 text-primary opacity-50 mb-3"></i>
+            <h4 class="fw-bold">Explore Clean Architecture</h4>
+            <p class="text-muted small mb-0">Learn full-stack web concepts with real production-grade Flask patterns.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Categories Pill Strip -->
+{% if categories %}
+<section class="py-4 bg-white border-top border-bottom">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <span class="fw-bold text-secondary text-uppercase small letter-spacing-1">Browse Topics:</span>
+      <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('posts.all_posts') }}" class="btn btn-sm btn-outline-secondary rounded-pill">All Topics</a>
+        {% for cat in categories %}
+          <a href="{{ url_for('posts.category_posts', slug=cat.slug) }}" class="btn btn-sm btn-light border rounded-pill">
+            {{ cat.name }} <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1">{{ cat.post_count }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Recent Articles Grid -->
+<section class="py-5">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="h3 fw-bold mb-1">Latest Publications</h2>
+        <p class="text-muted small mb-0">Fresh engineering insights, tutorials, and discussions.</p>
+      </div>
+      <a href="{{ url_for('posts.all_posts') }}" class="btn btn-outline-primary btn-sm">
+        View All ({{ stats.total_posts }})
+      </a>
+    </div>
+
+    {% if recent_posts %}
+      <div class="row g-4">
+        {% for post in recent_posts %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card card-post">
+              <div class="card-body">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                  {% if post.category %}
+                    <a href="{{ url_for('posts.category_posts', slug=post.category.slug) }}" class="category-badge">
+                      {{ post.category.name }}
+                    </a>
+                  {% else %}
+                    <span class="category-badge">General</span>
+                  {% endif %}
+                  <span class="text-muted small">
+                    <i class="bi bi-clock me-1"></i> {{ post.reading_time }}m read
+                  </span>
+                </div>
+
+                <h3 class="post-title">
+                  <a href="{{ url_for('posts.post_detail', slug=post.slug) }}">
+                    {{ post.title }}
+                  </a>
+                </h3>
+
+                <p class="post-excerpt">
+                  {{ post.clean_excerpt }}
+                </p>
+
+                <!-- Tags -->
+                <div class="mb-3">
+                  {% for tag in post.tags[:3] %}
+                    <a href="{{ url_for('posts.tag_posts', slug=tag.slug) }}" class="tag-pill">
+                      #{{ tag.name }}
+                    </a>
+                  {% endfor %}
+                </div>
+
+                <!-- Footer Meta -->
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-circle" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                      {{ post.author.initial }}
+                    </div>
+                    <div>
+                      <a href="{{ url_for('auth.user_profile', username=post.author.username) }}" class="small fw-semibold text-dark text-decoration-none">
+                        {{ post.author.username }}
+                      </a>
+                      <div class="text-muted" style="font-size: 0.72rem;">{{ post.created_at | datetimeformat }}</div>
+                    </div>
+                  </div>
+                  <div class="text-muted small">
+                    <i class="bi bi-chat-text me-1"></i> {{ post.comments.count() }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5 bg-white rounded-4 border">
+        <i class="bi bi-journal-x display-3 text-muted mb-3"></i>
+        <h4>No articles published yet</h4>
+        <p class="text-muted">Be the first developer to share an article on the platform!</p>
+        <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary">
+          <i class="bi bi-plus-lg me-1"></i> Write an Article
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- Call to Action Banner -->
+<section class="py-5 bg-primary text-white">
+  <div class="container text-center py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h2 class="display-6 fw-bold mb-3 text-white">Ready to share your knowledge?</h2>
+        <p class="lead mb-4 text-white-50">
+          Join DevScribe to write articles using our rich text editor, receive reader feedback, and build your developer portfolio.
+        </p>
+        {% if not current_user.is_authenticated %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg text-primary fw-bold px-4">
+            Create Free Account
+          </a>
+        {% else %}
+          <a href="{{ url_for('posts.create_post') }}" class="btn btn-light btn-lg text-primary fw-bold px-4">
+            <i class="bi bi-pencil-square me-1"></i> Start Writing Now
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

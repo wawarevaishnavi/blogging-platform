@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}All Categories - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+    <div>
+      <h1 class="h2 fw-bold mb-1">Browse Categories</h1>
+      <p class="text-secondary small mb-0">Explore articles cataloged by domain, architecture, and technology stack.</p>
+    </div>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('posts.create_category') }}" class="btn btn-outline-primary d-inline-flex align-items-center">
+        <i class="bi bi-folder-plus me-1"></i> Add Category
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="row g-4">
+    {% for cat in categories %}
+      <div class="col-md-6 col-lg-4">
+        <div class="card h-100 border-0 shadow-sm rounded-4 p-4 bg-white transition hover-lift">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="brand-icon" style="width: 44px; height: 44px; font-size: 1.25rem;">
+              <i class="bi bi-folder2-open"></i>
+            </div>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill">
+              {{ cat.post_count }} {% if cat.post_count == 1 %}Story{% else %}Stories{% endif %}
+            </span>
+          </div>
+
+          <h3 class="h5 fw-bold mb-2">
+            <a href="{{ url_for('posts.category_posts', slug=cat.slug) }}" class="text-dark text-decoration-none">
+              {{ cat.name }}
+            </a>
+          </h3>
+
+          <p class="text-secondary small mb-4 flex-grow-1">
+            {{ cat.description or 'In-depth engineering articles and tutorials covering ' + cat.name + '.' }}
+          </p>
+
+          <a href="{{ url_for('posts.category_posts', slug=cat.slug) }}" class="fw-semibold text-primary small d-inline-flex align-items-center">
+            Explore Category <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+        </div>
+      </div>
+    {% else %}
+      <div class="col-12 text-center py-5">
+        <p class="text-muted">No categories available yet.</p>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

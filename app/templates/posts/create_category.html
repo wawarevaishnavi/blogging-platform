@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Create New Category - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-white">
+        <div class="mb-4">
+          <a href="{{ url_for('posts.categories_list') }}" class="small text-muted text-decoration-none mb-2 d-inline-block">
+            <i class="bi bi-arrow-left me-1"></i> Back to Categories
+          </a>
+          <h1 class="h3 fw-bold mb-1">Create New Category</h1>
+          <p class="text-secondary small">Add a new category to group related articles and tutorials.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('posts.create_category') }}" novalidate>
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            <label class="form-label fw-bold" for="name">{{ form.name.label.text }}</label>
+            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+            {% for error in form.name.errors %}
+              <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold" for="description">{{ form.description.label.text }}</label>
+            {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows=3) }}
+            {% for error in form.description.errors %}
+              <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+            {% endfor %}
+            <div class="form-text small">Brief summary of topics covered in this category.</div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('posts.categories_list') }}" class="btn btn-light border">Cancel</a>
+            <button type="submit" class="btn btn-primary fw-semibold">
+              <i class="bi bi-folder-plus me-1"></i> {{ form.submit.label.text }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

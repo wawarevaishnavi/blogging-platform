@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-5">
+      <!-- Demo Credentials Quick Pill -->
+      <div class="card border-0 shadow-sm rounded-4 p-3 bg-light mb-3 border">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="small fw-bold text-secondary"><i class="bi bi-lightning-charge-fill text-warning me-1"></i> Quick Demo Accounts</span>
+          <span class="badge bg-primary-subtle text-primary">Internship Evaluator</span>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" id="btn-demo-alex" class="btn btn-sm btn-outline-primary flex-fill">
+            Login as <strong>alex_dev</strong>
+          </button>
+          <button type="button" id="btn-demo-sarah" class="btn btn-sm btn-outline-secondary flex-fill">
+            Login as <strong>sarah_tech</strong>
+          </button>
+        </div>
+        <div class="small text-muted mt-2" style="font-size: 0.75rem;">
+          Default password for seeded demo accounts: <code>password123</code>
+        </div>
+      </div>
+
+      <!-- Main Login Card -->
+      <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5 bg-white">
+        <div class="text-center mb-4">
+          <div class="brand-icon mx-auto mb-3" style="width: 48px; height: 48px; font-size: 1.5rem;">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </div>
+          <h1 class="h3 fw-bold mb-2">Welcome Back</h1>
+          <p class="text-secondary small">Sign in to manage your posts and join discussions.</p>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.login', next=request.args.get('next')) }}" novalidate>
+          {{ form.hidden_tag() }}
+
+          <!-- Email or Username -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small" for="email_or_username">{{ form.email_or_username.label.text }}</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person-badge"></i></span>
+              {{ form.email_or_username(class="form-control border-start-0" + (" is-invalid" if form.email_or_username.errors else "")) }}
+            </div>
+            {% for error in form.email_or_username.errors %}
+              <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Password -->
+          <div class="mb-3">
+            <label class="form-label fw-semibold small" for="password">{{ form.password.label.text }}</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+              {{ form.password(class="form-control border-start-0" + (" is-invalid" if form.password.errors else "")) }}
+            </div>
+            {% for error in form.password.errors %}
+              <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+            {% endfor %}
+          </div>
+
+          <!-- Remember Me -->
+          <div class="form-check mb-4">
+            {{ form.remember_me(class="form-check-input") }}
+            <label class="form-check-label small text-secondary" for="remember_me">
+              {{ form.remember_me.label.text }}
+            </label>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary btn-lg fw-semibold">
+              <i class="bi bi-box-arrow-in-right me-1"></i> {{ form.submit.label.text }}
+            </button>
+          </div>
+
+          <div class="text-center small text-secondary">
+            Don't have an account yet? <a href="{{ url_for('auth.register') }}" class="fw-semibold">Register here</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

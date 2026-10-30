@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+
+{% block title %}All Articles - DevScribe{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Page Header -->
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+      <h1 class="h2 fw-bold mb-1">Explore All Articles</h1>
+      <p class="text-secondary small mb-0">Browse through our complete library of developer tutorials and architectural guides.</p>
+    </div>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary d-inline-flex align-items-center">
+        <i class="bi bi-pencil-square me-1"></i> Write New Story
+      </a>
+    {% endif %}
+  </div>
+
+  <!-- Filter & Sort Strip -->
+  <div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+      <!-- Active tag / category -->
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="small fw-bold text-secondary text-uppercase">Browsing:</span>
+        {% if selected_category %}
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle p-2">
+            Category: {{ selected_category.name }}
+            <a href="{{ url_for('posts.all_posts', sort=sort_by) }}" class="text-danger ms-1"><i class="bi bi-x-circle-fill"></i></a>
+          </span>
+        {% elif selected_tag %}
+          <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle p-2">
+            Tag: #{{ selected_tag.name }}
+            <a href="{{ url_for('posts.all_posts', sort=sort_by) }}" class="text-danger ms-1"><i class="bi bi-x-circle-fill"></i></a>
+          </span>
+        {% else %}
+          <span class="text-muted small">All topics & tags</span>
+        {% endif %}
+      </div>
+
+      <!-- Sort Pills -->
+      <div class="d-flex align-items-center gap-2">
+        <span class="small fw-semibold text-secondary">Sort:</span>
+        <div class="btn-group btn-group-sm" role="group">
+          <a href="{{ url_for('posts.all_posts', category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='newest') }}" class="btn {% if sort_by == 'newest' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Newest
+          </a>
+          <a href="{{ url_for('posts.all_posts', category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='oldest') }}" class="btn {% if sort_by == 'oldest' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Oldest
+          </a>
+          <a href="{{ url_for('posts.all_posts', category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort='popular') }}" class="btn {% if sort_by == 'popular' %}btn-primary{% else %}btn-outline-secondary{% endif %}">
+            Most Discussed
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Posts Grid -->
+    <div class="col-lg-8">
+      {% if posts %}
+        <div class="row g-4">
+          {% for post in posts %}
+            <div class="col-md-6">
+              <div class="card card-post">
+                <div class="card-body">
+                  <div class="d-flex align-items-center justify-content-between mb-2">
+                    {% if post.category %}
+                      <a href="{{ url_for('posts.category_posts', slug=post.category.slug) }}" class="category-badge">
+                        {{ post.category.name }}
+                      </a>
+                    {% else %}
+                      <span class="category-badge">General</span>
+                    {% endif %}
+                    <span class="text-muted small">
+                      <i class="bi bi-clock me-1"></i> {{ post.reading_time }}m read
+                    </span>
+                  </div>
+
+                  <h3 class="post-title">
+                    <a href="{{ url_for('posts.post_detail', slug=post.slug) }}">
+                      {{ post.title }}
+                    </a>
+                  </h3>
+
+                  <p class="post-excerpt">
+                    {{ post.clean_excerpt }}
+                  </p>
+
+                  <div class="mb-3">
+                    {% for tag in post.tags[:3] %}
+                      <a href="{{ url_for('posts.tag_posts', slug=tag.slug) }}" class="tag-pill">
+                        #{{ tag.name }}
+                      </a>
+                    {% endfor %}
+                  </div>
+
+                  <div class="d-flex align-items-center justify-content-between pt-3 border-top mt-auto">
+                    <div class="d-flex align-items-center gap-2">
+                      <div class="avatar-circle" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                        {{ post.author.initial }}
+                      </div>
+                      <a href="{{ url_for('auth.user_profile', username=post.author.username) }}" class="small fw-semibold text-dark text-decoration-none">
+                        {{ post.author.username }}
+                      </a>
+                    </div>
+                    <div class="text-muted small">
+                      <i class="bi bi-chat-text me-1"></i> {{ post.comments.count() }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if pagination.pages > 1 %}
+          <nav class="mt-5" aria-label="Articles catalog pagination">
+            <ul class="pagination justify-content-center">
+              {% if pagination.has_prev %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('posts.all_posts', page=pagination.prev_num, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">Previous</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Previous</span></li>
+              {% endif %}
+
+              {% for p in pagination.iter_pages() %}
+                {% if p %}
+                  {% if p == pagination.page %}
+                    <li class="page-item active"><span class="page-link">{{ p }}</span></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('posts.all_posts', page=p, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">{{ p }}</a></li>
+                  {% endif %}
+                {% else %}
+                  <li class="page-item disabled"><span class="page-link">&hellip;</span></li>
+                {% endif %}
+              {% endfor %}
+
+              {% if pagination.has_next %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('posts.all_posts', page=pagination.next_num, category=selected_category.slug if selected_category else None, tag=selected_tag.slug if selected_tag else None, sort=sort_by) }}">Next</a></li>
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">Next</span></li>
+              {% endif %}
+            </ul>
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+          <i class="bi bi-journal-x display-3 text-muted mb-3"></i>
+          <h4>No articles found</h4>
+          <p class="text-secondary mb-4">No stories currently match this selection.</p>
+          <a href="{{ url_for('posts.all_posts') }}" class="btn btn-primary">Browse All Stories</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+      <!-- Search Widget -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold mb-3">Search</h5>
+        <form action="{{ url_for('main.search') }}" method="GET">
+          <div class="input-group">
+            <input type="text" name="q" class="form-control" placeholder="Search articles...">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i></button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Categories Card -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0">Categories</h5>
+          <a href="{{ url_for('posts.categories_list') }}" class="small text-primary">All</a>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for cat in categories %}
+            <a href="{{ url_for('posts.category_posts', slug=cat.slug) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center px-0 {% if selected_category and selected_category.id == cat.id %}fw-bold text-primary{% endif %}">
+              <span><i class="bi bi-folder2 text-primary me-2"></i> {{ cat.name }}</span>
+              <span class="badge bg-light text-secondary border rounded-pill">{{ cat.post_count }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Popular Tags Card -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h5 class="fw-bold mb-3">Popular Tags</h5>
+        <div class="d-flex flex-wrap gap-2">
+          {% for t in popular_tags %}
+            <a href="{{ url_for('posts.tag_posts', slug=t.slug) }}" class="btn btn-sm {% if selected_tag and selected_tag.id == t.id %}btn-primary{% else %}btn-light border{% endif %} rounded-pill">
+              #{{ t.name }}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

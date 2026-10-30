@@ -1,0 +1,129 @@
+<nav class="navbar navbar-expand-lg custom-navbar sticky-top">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand" href="{{ url_for('main.index') }}">
+      <div class="brand-icon">
+        <i class="bi bi-pen-fill"></i>
+      </div>
+      <span>Dev<span class="text-primary">Scribe</span></span>
+    </a>
+
+    <!-- Mobile Toggler -->
+    <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="bi bi-list fs-2 text-dark"></i>
+    </button>
+
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarMain">
+      <!-- Main Nav Links -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
+            <i class="bi bi-house me-1"></i> Home
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'posts.all_posts' %}active{% endif %}" href="{{ url_for('posts.all_posts') }}">
+            <i class="bi bi-journal-text me-1"></i> Articles
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-grid me-1"></i> Categories
+          </a>
+          <ul class="dropdown-menu border-0 shadow-lg rounded-3 py-2" aria-labelledby="categoriesDropdown">
+            {% if nav_categories %}
+              {% for cat in nav_categories %}
+                <li>
+                  <a class="dropdown-item py-2" href="{{ url_for('posts.category_posts', slug=cat.slug) }}">
+                    <i class="bi bi-folder2-open text-primary me-2"></i> {{ cat.name }}
+                  </a>
+                </li>
+              {% endfor %}
+              <li><hr class="dropdown-divider"></li>
+            {% endif %}
+            <li>
+              <a class="dropdown-item py-2 fw-semibold text-primary" href="{{ url_for('posts.categories_list') }}">
+                <i class="bi bi-arrow-right-circle me-2"></i> View All Categories
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'main.about' %}active{% endif %}" href="{{ url_for('main.about') }}">
+            <i class="bi bi-info-circle me-1"></i> About
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search Bar -->
+      <form class="d-flex me-lg-3 my-2 my-lg-0" action="{{ url_for('main.search') }}" method="GET">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-end-0 text-muted" id="search-addon">
+            <i class="bi bi-search"></i>
+          </span>
+          <input type="search" name="q" class="form-control bg-light border-start-0 ps-0" placeholder="Search posts..." value="{{ request.args.get('q', '') }}" aria-label="Search" aria-describedby="search-addon">
+        </div>
+      </form>
+
+      <!-- User Auth Section -->
+      <ul class="navbar-nav align-items-lg-center">
+        {% if current_user.is_authenticated %}
+          <li class="nav-item me-lg-2 my-2 my-lg-0">
+            <a href="{{ url_for('posts.create_post') }}" class="btn btn-primary d-inline-flex align-items-center">
+              <i class="bi bi-plus-lg me-1"></i> Write Article
+            </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center p-0" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div class="user-avatar-pill">
+                <div class="avatar-circle">
+                  {{ current_user.initial }}
+                </div>
+                <span>{{ current_user.username }}</span>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg rounded-3 py-2 mt-2" aria-labelledby="userMenu">
+              <li class="px-3 py-2 border-bottom">
+                <div class="fw-bold text-dark">{{ current_user.username }}</div>
+                <div class="small text-muted">{{ current_user.email }}</div>
+              </li>
+              <li>
+                <a class="dropdown-item py-2" href="{{ url_for('auth.dashboard') }}">
+                  <i class="bi bi-speedometer2 text-primary me-2"></i> Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2" href="{{ url_for('auth.user_profile', username=current_user.username) }}">
+                  <i class="bi bi-person text-secondary me-2"></i> My Public Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-2" href="{{ url_for('auth.edit_profile') }}">
+                  <i class="bi bi-gear text-secondary me-2"></i> Edit Profile Bio
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item py-2 text-danger" href="{{ url_for('auth.logout') }}">
+                  <i class="bi bi-box-arrow-right me-2"></i> Log Out
+                </a>
+              </li>
+            </ul>
+          </li>
+        {% else %}
+          <li class="nav-item me-lg-2">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary w-100 mb-2 mb-lg-0">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-primary w-100">
+              <i class="bi bi-person-plus me-1"></i> Get Started
+            </a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block title %}About Project - DevScribe Internship Platform{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Header -->
+  <div class="text-center max-w-700 mx-auto mb-5">
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 rounded-pill fw-semibold mb-2">
+      DIY Internship Capstone Project
+    </span>
+    <h1 class="display-5 fw-bold mb-3">About the Blogging Platform</h1>
+    <p class="lead text-secondary">
+      A complete, production-ready, full-stack web application designed and built across an intensive 8-week engineering curriculum.
+    </p>
+  </div>
+
+  <div class="row g-5">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+      <!-- Project Objectives -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white">
+        <h2 class="h4 fw-bold mb-3 text-primary">
+          <i class="bi bi-bullseye me-2"></i> Project Objectives & Scope
+        </h2>
+        <p class="text-secondary">
+          The primary objective of this internship project is to build a modern, scalable, and secure blogging platform from scratch without relying on boilerplate CMS solutions. It demonstrates mastery across full-stack Python software engineering, relational database modeling, rich-text sanitization, modern CSS styling, and automated test-driven development.
+        </p>
+
+        <h3 class="h5 fw-bold mt-4 mb-3">8-Week Implementation Roadmap:</h3>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 15%;">Week</th>
+                <th style="width: 35%;">Module</th>
+                <th>Delivered Engineering Capabilities</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fw-bold text-primary">Week 1</td>
+                <td>Flask Setup & Structure</td>
+                <td>Application factory pattern, SQLite setup, configuration classes, base Jinja templates.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 2</td>
+                <td>Authentication Engine</td>
+                <td>Flask-Login integration, Werkzeug password hashing, protected routes, user dashboard.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 3</td>
+                <td>CRUD & Rich Text Editor</td>
+                <td>Post, Category, Tag models; Many-to-Many associations; Quill.js integration; Bleach XSS sanitization.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 4</td>
+                <td>Modern Frontend Design</td>
+                <td>Bootstrap 5 custom design system, responsive navbar/footer, blog cards, profile views.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 5</td>
+                <td>Commenting System</td>
+                <td>Relational Comment model, validation, owner-based deletion, discussion threads.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 6</td>
+                <td>Search & Filtering</td>
+                <td>Multi-term SQL ILIKE search, category & tag filters, multi-column sorting, pagination.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 7</td>
+                <td>Testing & Deployment Prep</td>
+                <td>Comprehensive automated test suite, production environment configurations, CLI seeding commands.</td>
+              </tr>
+              <tr>
+                <td class="fw-bold text-primary">Week 8</td>
+                <td>Internship Evaluation</td>
+                <td>Video walkthrough presentation script, demo guide, submission checklists, and project report.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Security Implementation -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 mb-4 bg-white">
+        <h2 class="h4 fw-bold mb-3 text-primary">
+          <i class="bi bi-shield-check me-2"></i> Robust Security Architecture
+        </h2>
+        <div class="row g-4 mt-1">
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border">
+              <h5 class="fw-bold fs-6 mb-2"><i class="bi bi-key-fill text-warning me-1"></i> Cryptographic Hashing</h5>
+              <p class="small text-muted mb-0">Passwords are salted and hashed using modern scrypt/PBKDF2 via Werkzeug. Plain text passwords are never stored in memory or on disk.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border">
+              <h5 class="fw-bold fs-6 mb-2"><i class="bi bi-shield-slash-fill text-danger me-1"></i> Bleach XSS Sanitization</h5>
+              <p class="small text-muted mb-0">All HTML content submitted via Quill.js is scrubbed through Bleach, stripping executable scripts, harmful attributes, and invalid styling.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border">
+              <h5 class="fw-bold fs-6 mb-2"><i class="bi bi-lock-fill text-primary me-1"></i> CSRF Defense</h5>
+              <p class="small text-muted mb-0">Flask-WTF enforces synchronized cryptographic tokens on all HTTP POST/DELETE requests, blocking cross-site request forgery attacks.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 h-100 border">
+              <h5 class="fw-bold fs-6 mb-2"><i class="bi bi-person-check-fill text-success me-1"></i> Role & Owner Authorization</h5>
+              <p class="small text-muted mb-0">All article modification and deletion endpoints verify that the authenticated author strictly owns the target resource before execution.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar: Tech Stack Specs -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h4 class="fw-bold mb-3">Technology Stack</h4>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Language</span>
+            <span class="badge bg-light text-dark border">Python 3.14</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Web Framework</span>
+            <span class="badge bg-primary">Flask 3.1</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">ORM</span>
+            <span class="badge bg-light text-dark border">Flask-SQLAlchemy</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Authentication</span>
+            <span class="badge bg-light text-dark border">Flask-Login</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Forms & CSRF</span>
+            <span class="badge bg-light text-dark border">Flask-WTF / WTForms</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">HTML Sanitization</span>
+            <span class="badge bg-light text-dark border">Bleach</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Frontend CSS</span>
+            <span class="badge bg-info-subtle text-info-emphasis border">Bootstrap 5.3</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Rich Text Editor</span>
+            <span class="badge bg-light text-dark border">Quill.js Snow</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+            <span class="text-secondary">Database</span>
+            <span class="badge bg-light text-dark border">SQLite3</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-primary text-white">
+        <h5 class="fw-bold mb-2 text-white"><i class="bi bi-mortarboard me-2"></i> Evaluation Ready</h5>
+        <p class="small text-white-50 mb-3">
+          This project fulfills all requirements of the 8-Week DIY Internship with verified test coverage, clean code structure, and demonstration scripts.
+        </p>
+        <a href="{{ url_for('posts.all_posts') }}" class="btn btn-light btn-sm text-primary fw-bold w-100">
+          Explore Platform Live
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,75 @@
+<footer class="custom-footer">
+  <div class="container">
+    <div class="row g-4 mb-4">
+      <!-- Col 1: Brand & Bio -->
+      <div class="col-lg-4 col-md-6">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <div class="brand-icon">
+            <i class="bi bi-pen-fill"></i>
+          </div>
+          <span class="fs-4 fw-bold text-white">Dev<span class="text-primary">Scribe</span></span>
+        </div>
+        <p class="text-secondary mb-3">
+          A full-stack, secure, modular blogging platform built with Python Flask, SQLAlchemy, Bootstrap 5, and SQLite for the 8-Week DIY Internship Project.
+        </p>
+        <div class="d-flex gap-2">
+          <span class="badge bg-dark border border-secondary text-light">Python 3.14</span>
+          <span class="badge bg-dark border border-secondary text-light">Flask 3.x</span>
+          <span class="badge bg-dark border border-secondary text-light">Bootstrap 5</span>
+          <span class="badge bg-dark border border-secondary text-light">SQLite</span>
+        </div>
+      </div>
+
+      <!-- Col 2: Quick Links -->
+      <div class="col-lg-2 col-md-6">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled mb-0">
+          <li class="mb-2"><a href="{{ url_for('main.index') }}">Home</a></li>
+          <li class="mb-2"><a href="{{ url_for('posts.all_posts') }}">All Articles</a></li>
+          <li class="mb-2"><a href="{{ url_for('posts.categories_list') }}">Browse Categories</a></li>
+          <li class="mb-2"><a href="{{ url_for('main.search') }}">Search & Filter</a></li>
+          <li class="mb-2"><a href="{{ url_for('main.about') }}">Internship Details</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Categories -->
+      <div class="col-lg-3 col-md-6">
+        <h5>Popular Topics</h5>
+        <ul class="list-unstyled mb-0">
+          {% if nav_categories %}
+            {% for cat in nav_categories %}
+              <li class="mb-2">
+                <a href="{{ url_for('posts.category_posts', slug=cat.slug) }}">{{ cat.name }}</a>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li class="text-muted">No categories available</li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Col 4: Platform Security & Features -->
+      <div class="col-lg-3 col-md-6">
+        <h5>Security & Standards</h5>
+        <ul class="list-unstyled text-secondary small mb-0">
+          <li class="mb-2"><i class="bi bi-shield-check text-success me-2"></i> Werkzeug Password Hashing</li>
+          <li class="mb-2"><i class="bi bi-shield-lock text-success me-2"></i> Flask-WTF CSRF Tokens</li>
+          <li class="mb-2"><i class="bi bi-code-slash text-success me-2"></i> Bleach HTML Sanitization (XSS Defense)</li>
+          <li class="mb-2"><i class="bi bi-key text-success me-2"></i> Flask-Login Session Guard</li>
+          <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Comprehensive Unit Test Coverage</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="border-secondary my-4">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center text-secondary small">
+      <div>
+        &copy; {{ current_year }} DevScribe. DIY Internship Project (Weeks 1 - 8). All rights reserved.
+      </div>
+      <div class="mt-2 mt-md-0">
+        Crafted with <i class="bi bi-heart-fill text-danger"></i> using Python Flask & Jinja2.
+      </div>
+    </div>
+  </div>
+</footer>
